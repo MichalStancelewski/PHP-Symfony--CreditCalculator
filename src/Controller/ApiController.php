@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\DTO\CalculateRequestDTO;
+use App\Service\Serializer\DTOSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,8 +15,16 @@ class ApiController extends AbstractController
 
 
     #[Route('/api/calculate', name: 'api_calculate', methods: 'POST')]
-    public function calculate(Request $request): JsonResponse
+    public function calculate(Request $request, DTOSerializer $serializer): JsonResponse
     {
+
+
+        /** @var CalculateRequestDTO $calculateRequest */
+        $calculateRequest = $serializer->deserialize(
+            $request->getContent(), CalculateRequestDTO::class, 'json'
+        );
+
+
         $responseContent = 'OK';
 
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
