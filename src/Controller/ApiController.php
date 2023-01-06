@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\CalculateRequestDTO;
+use App\Filter\CalculationsFilterInterface;
 use App\Service\Serializer\DTOSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,7 +16,7 @@ class ApiController extends AbstractController
 
 
     #[Route('/api/calculate', name: 'api_calculate', methods: 'POST')]
-    public function calculate(Request $request, DTOSerializer $serializer): JsonResponse
+    public function calculate(Request $request, DTOSerializer $serializer, CalculationsFilterInterface $creditCalculation): JsonResponse
     {
 
 
@@ -24,8 +25,9 @@ class ApiController extends AbstractController
             $request->getContent(), CalculateRequestDTO::class, 'json'
         );
 
+        $calculation = $creditCalculation->apply($calculateRequest);
 
-        $responseContent = 'OK';
+        $responseContent = $serializer->serialize($calculation, 'json');
 
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
