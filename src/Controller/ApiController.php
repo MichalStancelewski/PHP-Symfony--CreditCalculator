@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\DTO\CalculateRequestDTO;
+use App\Entity\Clients;
+use App\Entity\CreditData;
 use App\Filter\CalculationsFilterInterface;
 use App\Service\Serializer\DTOSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,17 +20,21 @@ class ApiController extends AbstractController
     #[Route('/api/calculate', name: 'api_calculate', methods: 'POST')]
     public function calculate(Request $request, DTOSerializer $serializer, CalculationsFilterInterface $creditCalculation): JsonResponse
     {
+        $calculateRequest = new CalculateRequestDTO();
+        $JsonArray = json_decode($request->getContent(), true);
 
-
-        /** @var CalculateRequestDTO $calculateRequest */
-        $calculateRequest = $serializer->deserialize(
-            $request->getContent(), CalculateRequestDTO::class, 'json'
+        $calculateRequest->setClient(
+            $serializer->deserialize($serializer->serialize($JsonArray['clients'], 'json'), Clients::class, 'json')
+        );
+        $calculateRequest->setCreditData(
+            $serializer->deserialize($serializer->serialize($JsonArray['credit_data'], 'json'), CreditData::class, 'json')
         );
 
         $calculation = $creditCalculation->apply($calculateRequest);
 
         $responseContent = $serializer->serialize($calculation, 'json');
 
+        // $responseContent = "ok";
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 

@@ -2,6 +2,9 @@
 
 namespace App\DTO;
 
+use App\Entity\CalculationResults;
+use App\Entity\Clients;
+use App\Entity\CreditData;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CalculateRequestDTO implements CalculationEnquiryInterface
@@ -14,9 +17,6 @@ class CalculateRequestDTO implements CalculationEnquiryInterface
     private ?CreditData $creditData;
 
     private ?CalculationResults $calculationResults;
-
-    #[Assert\NotBlank]
-    private ?string $calculationDate;
 
     /**
      * @return int|null
@@ -80,22 +80,6 @@ class CalculateRequestDTO implements CalculationEnquiryInterface
     public function setCalculationResults(?CalculationResults $calculationResults): void
     {
         $this->calculationResults = $calculationResults;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getCalculationDate(): ?string
-    {
-        return $this->calculationDate;
-    }
-
-    /**
-     * @param string|null $calculationDate
-     */
-    public function setCalculationDate(?string $calculationDate): void
-    {
-        $this->calculationDate = $calculationDate;
     }
 
 }

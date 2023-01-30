@@ -22,9 +22,12 @@ class DTOSerializer implements SerializerInterface
         //$this->eventDispatcher = $eventDispatcher;
 
         $this->serializer = new Serializer(
-            [new ObjectNormalizer(
-                classMetadataFactory: new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader())),
-                nameConverter: new CamelCaseToSnakeCaseNameConverter())],
+            [
+                new ObjectNormalizer(
+                    classMetadataFactory: new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader())),
+                    nameConverter: new CamelCaseToSnakeCaseNameConverter()
+                )
+            ],
             [new JsonEncoder()]
         );
     }
