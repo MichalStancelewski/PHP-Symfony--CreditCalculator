@@ -14,9 +14,6 @@ class PlnCalculationResults extends CalculationResults
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?float $repayedSoFar = null;
-
-    #[ORM\Column]
     private ?float $fullCostIfNotChanged = null;
 
     #[ORM\Column]
@@ -27,39 +24,36 @@ class PlnCalculationResults extends CalculationResults
         return $this->id;
     }
 
-    public function getRepayedSoFar(): ?float
-    {
-        return $this->repayedSoFar;
-    }
-
-    public function setRepayedSoFar(float $repayedSoFar): self
-    {
-        $this->repayedSoFar = $repayedSoFar;
-
-        return $this;
-    }
-
+    /**
+     * @return float|null
+     */
     public function getFullCostIfNotChanged(): ?float
     {
         return $this->fullCostIfNotChanged;
     }
 
-    public function setFullCostIfNotChanged(float $fullCostIfNotChanged): self
+    /**
+     * @param float|null $fullCostIfNotChanged
+     */
+    public function setFullCostIfNotChanged(?float $fullCostIfNotChanged): void
     {
         $this->fullCostIfNotChanged = $fullCostIfNotChanged;
-
-        return $this;
     }
 
+    /**
+     * @return float|null
+     */
     public function getProfitAfterWiborAnnulment(): ?float
     {
         return $this->profitAfterWiborAnnulment;
     }
 
-    public function setProfitAfterWiborAnnulment(float $profitAfterWiborAnnulment): self
+    /**
+     * @param float|null $profitAfterWiborAnnulment
+     */
+    public function setProfitAfterWiborAnnulment(?float $profitAfterWiborAnnulment): void
     {
         $this->profitAfterWiborAnnulment = $profitAfterWiborAnnulment;
-
-        return $this;
     }
+
 }

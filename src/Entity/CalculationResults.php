@@ -17,37 +17,66 @@ abstract class CalculationResults
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $calculationDate = null;
+    private ?string $calculationDate = null;
 
     #[ORM\Column]
-    private ?float $profitAfterAnnulment = null;
+    private ?float $repayedSoFar = null;
+
+    #[ORM\Column]
+    private ?float $profitAfterCreditAnnulment = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCalculationDate(): ?\DateTimeImmutable
+    /**
+     * @return string|null
+     */
+    public function getCalculationDate(): ?string
     {
         return $this->calculationDate;
     }
 
-    public function setCalculationDate(\DateTimeImmutable $calculationDate): self
+    /**
+     * @param string|null $calculationDate
+     */
+    public function setCalculationDate(?string $calculationDate): void
     {
         $this->calculationDate = $calculationDate;
-
-        return $this;
     }
 
-    public function getProfitAfterAnnulment(): ?float
+    /**
+     * @return float|null
+     */
+    public function getRepayedSoFar(): ?float
     {
-        return $this->profitAfterAnnulment;
+        return $this->repayedSoFar;
     }
 
-    public function setProfitAfterAnnulment(float $profitAfterAnnulment): self
+    /**
+     * @param float|null $repayedSoFar
+     */
+    public function setRepayedSoFar(?float $repayedSoFar): void
     {
-        $this->profitAfterAnnulment = $profitAfterAnnulment;
-
-        return $this;
+        $this->repayedSoFar = $repayedSoFar;
     }
+
+    /**
+     * @return float|null
+     */
+    public function getProfitAfterCreditAnnulment(): ?float
+    {
+        return $this->profitAfterCreditAnnulment;
+    }
+
+    /**
+     * @param float|null $profitAfterCreditAnnulment
+     */
+    public function setProfitAfterCreditAnnulment(?float $profitAfterCreditAnnulment): void
+    {
+        $this->profitAfterCreditAnnulment = $profitAfterCreditAnnulment;
+    }
+
+
 }
