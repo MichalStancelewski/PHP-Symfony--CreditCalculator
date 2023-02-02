@@ -11,6 +11,8 @@ class CalculationFilter implements CalculationsFilterInterface
 {
     const DEFAULT_CREDIT_MARGIN_PLN = 2.2;
     const DEFAULT_CREDIT_MARGIN_CHF = 2.0;
+
+    // INSTALLMENT_TYPE: 1="equal", 2="decreasing"
     const DEFAULT_CREDIT_INSTALLMENT_TYPE_PLN = 1;
     const DEFAULT_CREDIT_INSTALLMENT_TYPE_CHF = 1;
 
