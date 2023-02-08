@@ -4,7 +4,6 @@ namespace App\Filter;
 
 use App\DTO\CalculationEnquiryInterface;
 use App\Entity\PlnCalculationResults;
-use DateTimeImmutable;
 use Symfony\Component\Finder\SplFileInfo;
 
 class CalculationFilter implements CalculationsFilterInterface
@@ -12,9 +11,11 @@ class CalculationFilter implements CalculationsFilterInterface
     const DEFAULT_CREDIT_MARGIN_PLN = 2.2;
     const DEFAULT_CREDIT_MARGIN_CHF = 2.0;
 
-    // INSTALLMENT_TYPE: 1="equal", 2="decreasing"
     const DEFAULT_CREDIT_INSTALLMENT_TYPE_PLN = 1;
     const DEFAULT_CREDIT_INSTALLMENT_TYPE_CHF = 1;
+
+    // INSTALLMENT_TYPE: 1="equal", 2="decreasing"
+    private static array $allowedInstallmentTypes = [1, 2];
 
     public function apply(CalculationEnquiryInterface $enquiry): CalculationEnquiryInterface
     {
@@ -30,25 +31,26 @@ class CalculationFilter implements CalculationsFilterInterface
 
             if( $creditData->getMargin() == null){
                 $creditData->setMargin(self::DEFAULT_CREDIT_MARGIN_PLN);
-            } else {
-                $creditMargin =  $creditData->getMargin();
             }
+            $creditMargin =  $creditData->getMargin();
+
 
             if($creditData->getInstallmentType() == null){
                 $creditData->setInstallmentType(self::DEFAULT_CREDIT_INSTALLMENT_TYPE_PLN);
-            } else {
-                $installmentType =  $creditData->getInstallmentType();
             }
+            $installmentType =  $creditData->getInstallmentType();
 
             $calculationResults = new PlnCalculationResults();
 
             date_default_timezone_set('Europe/Warsaw');
-            $currentDateTime = date('Y-m-d h:i:s');
+            $currentDateTime = date('Y-m-d H:i:s');
 
             $iterator = $creditLength;
 
             $numberOfInstallmentsPaid = 0;
             $currentWiborPlusMargin = 0;
+
+            $currentCreditAmount = $creditAmount;
 
             $sumOfCapitalInstallments = 0;
             $sumOfInterestInstallments = 0;
@@ -61,7 +63,6 @@ class CalculationFilter implements CalculationsFilterInterface
             $creditWithoutWibor = $creditAmount;
             $currentTotalInstallmentWithoutWibor = 0;
 
-
             $jsonWibor = $this->readJsonWithWibor();
 
             foreach ($jsonWibor as $key => $value) {
@@ -70,15 +71,15 @@ class CalculationFilter implements CalculationsFilterInterface
                     $wiborPlusMargin = ($value+$creditMargin) * 0.01 / 12;
                     $marginOnly = $creditMargin * 0.01 / 12;
 
-                    $interestInstallment = $creditAmount * ($wiborPlusMargin);
-                    $totalInstallment = $creditAmount * (($wiborPlusMargin * pow(1+$wiborPlusMargin, $iterator)) / (pow(1+$wiborPlusMargin, $iterator) -1));
+                    $interestInstallment = $currentCreditAmount * ($wiborPlusMargin);
+                    $totalInstallment = $currentCreditAmount * (($wiborPlusMargin * pow(1+$wiborPlusMargin, $iterator)) / (pow(1+$wiborPlusMargin, $iterator) -1));
                     $capitalInstallment = $totalInstallment - $interestInstallment;
 
-                    $interestInstallmentWithoutWibor = $creditAmount * ($marginOnly);
-                    $totalInstallmentWithoutWibor = $creditAmount * (($marginOnly * pow(1+$marginOnly, $iterator)) / (pow(1+$marginOnly, $iterator) -1));
+                    $interestInstallmentWithoutWibor = $currentCreditAmount * ($marginOnly);
+                    $totalInstallmentWithoutWibor = $currentCreditAmount * (($marginOnly * pow(1+$marginOnly, $iterator)) / (pow(1+$marginOnly, $iterator) -1));
                     $capitalInstallmentWithoutWibor = $totalInstallmentWithoutWibor - $interestInstallmentWithoutWibor;
 
-                    $currentCreditAmount = $creditAmount - $capitalInstallment;
+                    $currentCreditAmount = $currentCreditAmount - $capitalInstallment;
                     $sumOfCapitalInstallments = $sumOfCapitalInstallments + $capitalInstallment;
                     $sumOfInterestInstallments = $sumOfInterestInstallments + $interestInstallment;
                     $sumOfTotalInstallments = $sumOfTotalInstallments + $totalInstallment;
