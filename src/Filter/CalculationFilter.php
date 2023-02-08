@@ -8,6 +8,8 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class CalculationFilter implements CalculationsFilterInterface
 {
+    const PATH_TO_WIBOR_JSON = __DIR__ . '/Resources/wibor.json';
+
     const DEFAULT_CREDIT_MARGIN_PLN = 2.2;
     const DEFAULT_CREDIT_MARGIN_CHF = 2.0;
 
@@ -136,7 +138,7 @@ class CalculationFilter implements CalculationsFilterInterface
 
     private function readJsonWithWibor()
     {
-        $file = new SplFileInfo('resources/wibor.json', '','');
+        $file = new SplFileInfo(self::PATH_TO_WIBOR_JSON, '','');
         return $jsonData = json_decode($file->getContents(),true);
     }
 
