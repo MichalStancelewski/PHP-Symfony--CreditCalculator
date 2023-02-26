@@ -5,7 +5,6 @@ namespace App\Tests\unit;
 use App\DTO\CalculateRequestDTO;
 use App\Entity\Clients;
 use App\Entity\CreditData;
-use App\Entity\PlnCalculationResults;
 use App\Filter\CalculationFilter;
 use App\Tests\ServiceTestCase;
 
