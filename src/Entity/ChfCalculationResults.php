@@ -13,8 +13,29 @@ class ChfCalculationResults extends CalculationResults
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column]
+    private ?float $overpaidInstallments = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
+
+    /**
+     * @return float|null
+     */
+    public function getOverpaidInstallments(): ?float
+    {
+        return $this->overpaidInstallments;
+    }
+
+    /**
+     * @param float|null $overpaidInstallments
+     */
+    public function setOverpaidInstallments(?float $overpaidInstallments): void
+    {
+        $this->overpaidInstallments = $overpaidInstallments;
+    }
+
 }
+

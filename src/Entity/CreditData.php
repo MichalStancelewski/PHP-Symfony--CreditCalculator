@@ -31,9 +31,6 @@ class CreditData
     #[ORM\Column(nullable: true)]
     private ?float $margin = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $installmentType = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -111,15 +108,4 @@ class CreditData
         return $this;
     }
 
-    public function getInstallmentType(): ?int
-    {
-        return $this->installmentType;
-    }
-
-    public function setInstallmentType(?int $installmentType): self
-    {
-        $this->installmentType = $installmentType;
-
-        return $this;
-    }
 }

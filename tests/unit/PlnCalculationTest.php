@@ -21,7 +21,6 @@ class PlnCalculationTest extends ServiceTestCase
         $creditData->setStartYear('2005');
         $creditData->setStartMonth('01');
         $creditData->setPeriod('30');
-        $creditData->setInstallmentType(null);
         $creditData->setMargin(null);
 
         $enquiry = new CalculateRequestDTO();

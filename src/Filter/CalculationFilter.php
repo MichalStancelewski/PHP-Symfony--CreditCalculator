@@ -3,38 +3,32 @@
 namespace App\Filter;
 
 use App\DTO\CalculationEnquiryInterface;
-use App\Entity\PlnCalculationResults;
-use App\Filter\Calculations\PlnCalculation;
-use Symfony\Component\Finder\SplFileInfo;
+use App\Filter\Factory\CalculationCurrencyFactory;
 
 class CalculationFilter implements CalculationsFilterInterface
 {
+    public function __construct(private CalculationCurrencyFactory $calculationCurrencyFactory)
+    {
 
-
-    const DEFAULT_CREDIT_MARGIN_CHF = 2.0;
-    const DEFAULT_CREDIT_INSTALLMENT_TYPE_CHF = 1;
-
-    // INSTALLMENT_TYPE: 1="equal", 2="decreasing"
-    private static array $allowedInstallmentTypes = [1, 2];
+    }
 
     public function apply(CalculationEnquiryInterface $enquiry): CalculationEnquiryInterface
     {
+        $currency = $enquiry->getCreditData()->getCurrency();
 
-        if ($enquiry->getCreditData()->getCurrency() === "PLN") {
+        $calculationFilter = $this->calculationCurrencyFactory->create($currency);
+        $enquiry->setCalculationResults($calculationFilter->modify($enquiry));
 
-            $plnCalculation = new PlnCalculation();
-            $enquiry->setCalculationResults($plnCalculation->modify($enquiry));
-            return $enquiry;
-
-        }
-
-        if ($enquiry->getCreditData()->getCurrency() === "CHF") {
-
-            return $enquiry;
-        }
+        return $enquiry;
 
         //TODO throw ERROR method not found
-    }
 
+        //TODO create database
+
+        //TODO post to database
+
+        //TODO send emails
+
+    }
 
 }

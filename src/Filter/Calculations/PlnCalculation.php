@@ -10,10 +10,6 @@ use App\Filter\JsonReader;
 class PlnCalculation implements CalculationInterface
 {
     const DEFAULT_CREDIT_MARGIN_PLN = 2.2;
-    const DEFAULT_CREDIT_INSTALLMENT_TYPE_PLN = 1;
-
-    // INSTALLMENT_TYPE: 1="equal", 2="decreasing"
-    private static array $allowedInstallmentTypes = [1, 2];
 
     public function modify(CalculationEnquiryInterface $enquiry): CalculationResults
     {
@@ -27,12 +23,6 @@ class PlnCalculation implements CalculationInterface
             $creditData->setMargin(self::DEFAULT_CREDIT_MARGIN_PLN);
         }
         $creditMargin = $creditData->getMargin();
-
-
-        if ($creditData->getInstallmentType() == null) {
-            $creditData->setInstallmentType(self::DEFAULT_CREDIT_INSTALLMENT_TYPE_PLN);
-        }
-        $installmentType = $creditData->getInstallmentType();
 
         $calculationResults = new PlnCalculationResults();
 
@@ -57,54 +47,43 @@ class PlnCalculation implements CalculationInterface
         $currentTotalInstallmentWithoutWibor = 0;
 
         $jsonReader = new JsonReader();
-        $jsonWibor = $jsonReader->read();
+        $jsonWibor = $jsonReader->read($creditData->getCurrency());
 
-        switch ($installmentType) {
-            case 1:
-                foreach ($jsonWibor as $key => $value) {
+        foreach ($jsonWibor as $key => $value) {
+            if ($key >= $creditDate) {
+                $wiborPlusMargin = ($value + $creditMargin) * 0.01 / 12;
+                $marginOnly = $creditMargin * 0.01 / 12;
 
-                    if ($key >= $creditDate) {
-                        $wiborPlusMargin = ($value + $creditMargin) * 0.01 / 12;
-                        $marginOnly = $creditMargin * 0.01 / 12;
+                $interestInstallment = $currentCreditAmount * ($wiborPlusMargin);
+                $totalInstallment = $currentCreditAmount * (($wiborPlusMargin * pow(1 + $wiborPlusMargin, $iterator)) / (pow(1 + $wiborPlusMargin, $iterator) - 1));
+                $capitalInstallment = $totalInstallment - $interestInstallment;
 
-                        $interestInstallment = $currentCreditAmount * ($wiborPlusMargin);
-                        $totalInstallment = $currentCreditAmount * (($wiborPlusMargin * pow(1 + $wiborPlusMargin, $iterator)) / (pow(1 + $wiborPlusMargin, $iterator) - 1));
-                        $capitalInstallment = $totalInstallment - $interestInstallment;
+                $interestInstallmentWithoutWibor = $currentCreditAmount * ($marginOnly);
+                $totalInstallmentWithoutWibor = $currentCreditAmount * (($marginOnly * pow(1 + $marginOnly, $iterator)) / (pow(1 + $marginOnly, $iterator) - 1));
+                $capitalInstallmentWithoutWibor = $totalInstallmentWithoutWibor - $interestInstallmentWithoutWibor;
 
-                        $interestInstallmentWithoutWibor = $currentCreditAmount * ($marginOnly);
-                        $totalInstallmentWithoutWibor = $currentCreditAmount * (($marginOnly * pow(1 + $marginOnly, $iterator)) / (pow(1 + $marginOnly, $iterator) - 1));
-                        $capitalInstallmentWithoutWibor = $totalInstallmentWithoutWibor - $interestInstallmentWithoutWibor;
-
-                        $currentCreditAmount = $currentCreditAmount - $capitalInstallment;
-                        $sumOfCapitalInstallments = $sumOfCapitalInstallments + $capitalInstallment;
-                        $sumOfInterestInstallments = $sumOfInterestInstallments + $interestInstallment;
-                        $sumOfTotalInstallments = $sumOfTotalInstallments + $totalInstallment;
-                        $currentTotalInstallment = $totalInstallment;
+                $currentCreditAmount = $currentCreditAmount - $capitalInstallment;
+                $sumOfCapitalInstallments = $sumOfCapitalInstallments + $capitalInstallment;
+                $sumOfInterestInstallments = $sumOfInterestInstallments + $interestInstallment;
+                $sumOfTotalInstallments = $sumOfTotalInstallments + $totalInstallment;
+                $currentTotalInstallment = $totalInstallment;
 
 
-                        $creditWithoutWibor = $creditWithoutWibor - $capitalInstallmentWithoutWibor;
-                        $sumOfCapitalInstallmentsWithoutWibor = $sumOfCapitalInstallmentsWithoutWibor + $capitalInstallmentWithoutWibor;
-                        $sumOfInterestInstallmentsWithoutWibor = $sumOfInterestInstallmentsWithoutWibor + $interestInstallmentWithoutWibor;
-                        $sumOfTotalInstallmentsWithoutWibor = $sumOfTotalInstallmentsWithoutWibor + $totalInstallmentWithoutWibor;
+                $creditWithoutWibor = $creditWithoutWibor - $capitalInstallmentWithoutWibor;
+                $sumOfCapitalInstallmentsWithoutWibor = $sumOfCapitalInstallmentsWithoutWibor + $capitalInstallmentWithoutWibor;
+                $sumOfInterestInstallmentsWithoutWibor = $sumOfInterestInstallmentsWithoutWibor + $interestInstallmentWithoutWibor;
+                $sumOfTotalInstallmentsWithoutWibor = $sumOfTotalInstallmentsWithoutWibor + $totalInstallmentWithoutWibor;
 
-                        if ($currentTotalInstallmentWithoutWibor == 0) {
-                            $currentTotalInstallmentWithoutWibor = $totalInstallmentWithoutWibor;
-                        }
-
-                        $numberOfInstallmentsPaid++;
-
-                        if ($iterator-- < 1) break;
-                    } else {
-                        // TODO THROW ERROR
-                    }
+                if ($currentTotalInstallmentWithoutWibor == 0) {
+                    $currentTotalInstallmentWithoutWibor = $totalInstallmentWithoutWibor;
                 }
-                break;
-            case 2:
-                // TODO IMPLEMENT
-                break;
-            default:
+
+                $numberOfInstallmentsPaid++;
+
+                if ($iterator-- < 1) break;
+            } else {
                 // TODO THROW ERROR
-                break;
+            }
         }
 
         $numberOfInstallmentsRemaining = $creditLength - $numberOfInstallmentsPaid;
