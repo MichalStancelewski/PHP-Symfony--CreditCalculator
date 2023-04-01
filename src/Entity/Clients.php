@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ClientsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ClientsRepository::class)]
 class Clients implements EnquiryInterface
@@ -13,12 +14,16 @@ class Clients implements EnquiryInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nameFirst = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nameLast = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Email]
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 

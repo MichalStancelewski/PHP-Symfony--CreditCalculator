@@ -14,6 +14,8 @@ class CreditData implements EnquiryInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Currency]
     #[ORM\Column(length: 255)]
     private ?string $currency = null;
 
@@ -22,12 +24,23 @@ class CreditData implements EnquiryInterface
     #[ORM\Column]
     private ?float $value = null;
 
+    #[Assert\NotBlank]
+    #[Assert\GreaterThan(value: 1995)]
+    #[Assert\LessThan(value: 2023)]
+    #[Assert\Length(4)]
     #[ORM\Column(length: 4)]
     private ?string $startYear = null;
 
+    #[Assert\NotBlank]
+    #[Assert\GreaterThan(value: 0)]
+    #[Assert\LessThan(value: 13)]
+    #[Assert\LessThan(value: 13)]
+    #[Assert\Length(2)]
     #[ORM\Column(length: 2)]
     private ?string $startMonth = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Positive]
     #[ORM\Column]
     private ?int $period = null;
 

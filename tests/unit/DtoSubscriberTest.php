@@ -2,18 +2,22 @@
 
 namespace App\Tests\unit;
 
-use App\DTO\CalculateRequestDTO;
-use App\Entity\Clients;
 use App\Entity\CreditData;
-use App\Entity\PlnCalculationResults;
 use App\Event\AfterDtoCreatedEvent;
+use App\EventSubscriber\DtoSubscriber;
+use App\Service\ServiceException;
 use App\Tests\ServiceTestCase;
-use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 
 class DtoSubscriberTest extends ServiceTestCase
 {
+
+    /** @test */
+    public function testEventSubscription(): void
+    {
+        $this->assertArrayHasKey(AfterDtoCreatedEvent::NAME, DtoSubscriber::getSubscribedEvents());
+    }
 
     /** @test */
     public function a_dto_is_validated_after_it_has_been_created(): void
@@ -26,8 +30,8 @@ class DtoSubscriberTest extends ServiceTestCase
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $this->container->get('debug.event_dispatcher');
 
-        $this->expectException(ValidationFailedException::class);
-        $this->expectExceptionMessage('This value should be positive.');
+        $this->expectException(ServiceException::class);
+        $this->expectExceptionMessage('Validation failed');
 
         $eventDispatcher->dispatch($event, $event::NAME);
     }
