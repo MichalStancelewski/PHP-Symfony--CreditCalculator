@@ -6,7 +6,7 @@ use App\Repository\ClientsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClientsRepository::class)]
-class Clients
+class Clients implements EnquiryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

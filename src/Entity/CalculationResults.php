@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\InheritanceType("SINGLE_TABLE")]
 #[ORM\DiscriminatorColumn("type", "string", 2)]
 
-abstract class CalculationResults
+abstract class CalculationResults implements EnquiryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

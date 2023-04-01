@@ -4,9 +4,10 @@ namespace App\Entity;
 
 use App\Repository\CreditDataRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CreditDataRepository::class)]
-class CreditData
+class CreditData implements EnquiryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,6 +17,8 @@ class CreditData
     #[ORM\Column(length: 255)]
     private ?string $currency = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Positive]
     #[ORM\Column]
     private ?float $value = null;
 

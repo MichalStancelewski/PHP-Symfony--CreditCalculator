@@ -5,9 +5,10 @@ namespace App\DTO;
 use App\Entity\CalculationResults;
 use App\Entity\Clients;
 use App\Entity\CreditData;
+use App\Entity\EnquiryInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CalculateRequestDTO implements CalculationEnquiryInterface
+class CalculateRequestDTO implements CalculationEnquiryInterface, EnquiryInterface
 {
     #[Assert\NotBlank]
     private ?int $calculationId;
