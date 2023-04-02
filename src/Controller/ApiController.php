@@ -33,7 +33,7 @@ class ApiController extends AbstractController
         $calculation = $creditCalculation->apply($calculateRequest);
 
         $responseContent = $serializer->serialize($calculation, 'json');
-        
+
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 
