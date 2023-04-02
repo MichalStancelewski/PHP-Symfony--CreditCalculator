@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\ChfCalculationResults;
+use App\Service\ServiceException;
+use App\Service\ServiceExceptionData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +21,18 @@ class ChfCalculationResultsRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ChfCalculationResults::class);
+    }
+
+    public function findOrFail(int $id): ChfCalculationResults
+    {
+        $chfCalculationResults = $this->find($id);
+
+        if(!$chfCalculationResults) {
+            $exceptionData = new ServiceExceptionData(404, 'Calculation Not Found');
+            throw new ServiceException($exceptionData);
+        }
+
+        return $chfCalculationResults;
     }
 
     public function save(ChfCalculationResults $entity, bool $flush = false): void

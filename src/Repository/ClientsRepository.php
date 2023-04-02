@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Clients;
+use App\Service\ServiceException;
+use App\Service\ServiceExceptionData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +21,18 @@ class ClientsRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Clients::class);
+    }
+
+    public function findOrFail(int $id): Clients
+    {
+        $clients = $this->find($id);
+
+        if(!$clients) {
+            $exceptionData = new ServiceExceptionData(404, 'Calculation Not Found');
+            throw new ServiceException($exceptionData);
+        }
+
+        return $clients;
     }
 
     public function save(Clients $entity, bool $flush = false): void

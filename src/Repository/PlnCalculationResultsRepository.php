@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\PlnCalculationResults;
+use App\Service\ServiceException;
+use App\Service\ServiceExceptionData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +21,18 @@ class PlnCalculationResultsRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PlnCalculationResults::class);
+    }
+
+    public function findOrFail(int $id): PlnCalculationResults
+    {
+        $plnCalculationResults = $this->find($id);
+
+        if(!$plnCalculationResults) {
+            $exceptionData = new ServiceExceptionData(404, 'Calculation Not Found');
+            throw new ServiceException($exceptionData);
+        }
+
+        return $plnCalculationResults;
     }
 
     public function save(PlnCalculationResults $entity, bool $flush = false): void

@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\CreditData;
+use App\Service\ServiceException;
+use App\Service\ServiceExceptionData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +21,18 @@ class CreditDataRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CreditData::class);
+    }
+
+    public function findOrFail(int $id): CreditData
+    {
+        $creditData = $this->find($id);
+
+        if(!$creditData) {
+            $exceptionData = new ServiceExceptionData(404, 'Calculation Not Found');
+            throw new ServiceException($exceptionData);
+        }
+
+        return $creditData;
     }
 
     public function save(CreditData $entity, bool $flush = false): void
