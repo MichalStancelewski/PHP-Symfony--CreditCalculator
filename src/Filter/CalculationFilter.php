@@ -21,8 +21,6 @@ class CalculationFilter implements CalculationsFilterInterface
 
         return $enquiry;
 
-        //TODO throw ERROR method not found
-
         //TODO create database
 
         //TODO post to database
