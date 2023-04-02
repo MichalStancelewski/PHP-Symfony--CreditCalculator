@@ -6,6 +6,12 @@ use App\DTO\CalculateRequestDTO;
 use App\Entity\Clients;
 use App\Entity\CreditData;
 use App\Filter\CalculationsFilterInterface;
+use App\Repository\AuthKeyRepository;
+use App\Repository\ChfCalculationResultsRepository;
+use App\Repository\ClientsRepository;
+use App\Repository\CreditDataRepository;
+use App\Repository\PlnCalculationResultsRepository;
+use App\Service\Authorization\AuthorizationValidation;
 use App\Service\Serializer\DTOSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,7 +21,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
 {
-
+    public function __construct(
+        private readonly CreditDataRepository      $creditDataRepository,
+        private readonly ClientsRepository $clientsRepository,
+        private readonly PlnCalculationResultsRepository $plnCalculationResultsRepository,
+        private readonly ChfCalculationResultsRepository $chfCalculationResultsRepository,
+        private readonly AuthKeyRepository $authKeyRepository
+    )
+    {
+    }
 
     #[Route('/api/calculate', name: 'api_calculate', methods: 'POST')]
     public function calculate(Request $request, DTOSerializer $serializer, CalculationsFilterInterface $creditCalculation): JsonResponse
@@ -40,6 +54,9 @@ class ApiController extends AbstractController
     #[Route('/api/find/all', name: 'api_find_all', methods: 'POST')]
     public function findAll(Request $request): JsonResponse
     {
+        $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
+        $authorizationValidation->validate($request->headers->get('Authorization'));
+
         return $this->json([
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/ApiController.php',
