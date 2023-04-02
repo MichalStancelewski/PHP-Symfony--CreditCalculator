@@ -82,7 +82,7 @@ class PlnCalculation implements CalculationInterface
 
                 if ($iterator-- < 1) break;
             } else {
-                // TODO THROW ERROR
+                //do nothing
             }
         }
 

@@ -12,13 +12,12 @@ class AuthorizationValidation
     {
     }
 
-    public function validate(string $authorizationKey): bool
+    public function validate(?string $authorizationKey): bool
     {
         $hashedInput = hash('sha3-512', $authorizationKey);
 
-        if (!($this->getKey() == $hashedInput)) {
-            $accessExceptionData = new ServiceExceptionData(403, 'Access denied.: ' . $hashedInput . ' ' . $authorizationKey);
-            throw new ServiceException($accessExceptionData);
+        if (!($this->getKey() == $hashedInput) ) {
+            $this->returnUnauthorizedError();
         }
         return true;
     }
@@ -26,5 +25,10 @@ class AuthorizationValidation
     private function getKey(): string
     {
         return $this->authKeyRepository->find(1)->getKeyName();
+    }
+
+    public function returnUnauthorizedError(){
+        $accessExceptionData = new ServiceExceptionData(401, 'Access denied.');
+        throw new ServiceException($accessExceptionData);
     }
 }
