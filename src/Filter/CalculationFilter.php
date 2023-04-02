@@ -20,13 +20,6 @@ class CalculationFilter implements CalculationsFilterInterface
         $enquiry->setCalculationResults($calculationFilter->modify($enquiry));
 
         return $enquiry;
-
-        //TODO create database
-
-        //TODO post to database
-
-        //TODO send emails
-
     }
 
 }

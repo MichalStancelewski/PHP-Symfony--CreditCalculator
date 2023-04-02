@@ -46,6 +46,12 @@ class ApiController extends AbstractController
 
         $calculation = $creditCalculation->apply($calculateRequest);
 
+        //TODO create relations in DB
+
+        //TODO post to database
+
+        //TODO send emails
+
         $responseContent = $serializer->serialize($calculation, 'json');
 
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
