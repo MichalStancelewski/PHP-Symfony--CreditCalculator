@@ -13,6 +13,7 @@ use App\Repository\CreditDataRepository;
 use App\Repository\PlnCalculationResultsRepository;
 use App\Service\Authorization\AuthorizationValidation;
 use App\Service\Serializer\DTOSerializer;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,8 @@ class ApiController extends AbstractController
         private readonly ClientsRepository $clientsRepository,
         private readonly PlnCalculationResultsRepository $plnCalculationResultsRepository,
         private readonly ChfCalculationResultsRepository $chfCalculationResultsRepository,
-        private readonly AuthKeyRepository $authKeyRepository
+        private readonly AuthKeyRepository $authKeyRepository,
+        private EntityManagerInterface $entityManager
     )
     {
     }
@@ -46,14 +48,24 @@ class ApiController extends AbstractController
 
         $calculation = $creditCalculation->apply($calculateRequest);
 
-        //TODO create relations in DB
+        //TODO post to database (refactor this)
+        $entityManager = $this->entityManager;
 
-        //TODO post to database
+        $client = $calculation->getClient();
+        $calculationResults = $calculation->getCalculationResults();
+        $creditData = $calculation->getCreditData();
+        $creditData->setClients($client);
+        $creditData->setCalculationResults($calculationResults);
+
+        $entityManager->persist($client);
+        $entityManager->persist($calculationResults);
+        $entityManager->persist($creditData);
+
+        $entityManager->flush();
 
         //TODO send emails
 
-        $responseContent = $serializer->serialize($calculation, 'json');
-
+        $responseContent = $serializer->serialize($creditData, 'json');
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 

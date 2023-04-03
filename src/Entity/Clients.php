@@ -38,9 +38,6 @@ class Clients implements EnquiryInterface
     #[ORM\Column]
     private ?bool $agreementMarketing = null;
 
-    #[ORM\OneToMany(mappedBy: 'clients', targetEntity: CreditData::class)]
-    private Collection $creditData;
-
     public function __construct()
     {
         $this->creditData = new ArrayCollection();
@@ -123,33 +120,4 @@ class Clients implements EnquiryInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, CreditData>
-     */
-    public function getCreditData(): Collection
-    {
-        return $this->creditData;
-    }
-
-    public function addCreditData(CreditData $creditData): self
-    {
-        if (!$this->creditData->contains($creditData)) {
-            $this->creditData->add($creditData);
-            $creditData->setClients($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCreditData(CreditData $creditData): self
-    {
-        if ($this->creditData->removeElement($creditData)) {
-            // set the owning side to null (unless already changed)
-            if ($creditData->getClients() === $this) {
-                $creditData->setClients(null);
-            }
-        }
-
-        return $this;
-    }
 }

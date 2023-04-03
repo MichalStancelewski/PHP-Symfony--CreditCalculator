@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CalculationResultsRepository::class)]
 #[ORM\InheritanceType("SINGLE_TABLE")]
-#[ORM\DiscriminatorColumn("type", "string", 2)]
+#[ORM\DiscriminatorColumn("type", "string")]
 
 abstract class CalculationResults implements EnquiryInterface
 {
@@ -24,9 +24,6 @@ abstract class CalculationResults implements EnquiryInterface
 
     #[ORM\Column]
     private ?float $profitAfterCreditAnnulment = null;
-
-    #[ORM\OneToOne(mappedBy: 'CalculationResults', cascade: ['persist', 'remove'])]
-    private ?CreditData $creditData = null;
 
     public function getId(): ?int
     {
@@ -80,23 +77,5 @@ abstract class CalculationResults implements EnquiryInterface
     {
         $this->profitAfterCreditAnnulment = $profitAfterCreditAnnulment;
     }
-
-    public function getCreditData(): ?CreditData
-    {
-        return $this->creditData;
-    }
-
-    public function setCreditData(CreditData $creditData): self
-    {
-        // set the owning side of the relation if necessary
-        if ($creditData->getCalculationResults() !== $this) {
-            $creditData->setCalculationResults($this);
-        }
-
-        $this->creditData = $creditData;
-
-        return $this;
-    }
-
 
 }
