@@ -25,6 +25,9 @@ abstract class CalculationResults implements EnquiryInterface
     #[ORM\Column]
     private ?float $profitAfterCreditAnnulment = null;
 
+    #[ORM\OneToOne(mappedBy: 'CalculationResults', cascade: ['persist', 'remove'])]
+    private ?CreditData $creditData = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +79,23 @@ abstract class CalculationResults implements EnquiryInterface
     public function setProfitAfterCreditAnnulment(?float $profitAfterCreditAnnulment): void
     {
         $this->profitAfterCreditAnnulment = $profitAfterCreditAnnulment;
+    }
+
+    public function getCreditData(): ?CreditData
+    {
+        return $this->creditData;
+    }
+
+    public function setCreditData(CreditData $creditData): self
+    {
+        // set the owning side of the relation if necessary
+        if ($creditData->getCalculationResults() !== $this) {
+            $creditData->setCalculationResults($this);
+        }
+
+        $this->creditData = $creditData;
+
+        return $this;
     }
 
 

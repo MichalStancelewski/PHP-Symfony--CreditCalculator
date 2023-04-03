@@ -47,6 +47,14 @@ class CreditData implements EnquiryInterface
     #[ORM\Column(nullable: true)]
     private ?float $margin = null;
 
+    #[ORM\OneToOne(inversedBy: 'creditData', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?CalculationResults $CalculationResults = null;
+
+    #[ORM\ManyToOne(inversedBy: 'creditData')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Clients $clients = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +128,30 @@ class CreditData implements EnquiryInterface
     public function setMargin(?float $margin): self
     {
         $this->margin = $margin;
+
+        return $this;
+    }
+
+    public function getCalculationResults(): ?CalculationResults
+    {
+        return $this->CalculationResults;
+    }
+
+    public function setCalculationResults(CalculationResults $CalculationResults): self
+    {
+        $this->CalculationResults = $CalculationResults;
+
+        return $this;
+    }
+
+    public function getClients(): ?Clients
+    {
+        return $this->clients;
+    }
+
+    public function setClients(?Clients $clients): self
+    {
+        $this->clients = $clients;
 
         return $this;
     }
