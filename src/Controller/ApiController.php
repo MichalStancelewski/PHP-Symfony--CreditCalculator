@@ -7,10 +7,7 @@ use App\Entity\Clients;
 use App\Entity\CreditData;
 use App\Filter\CalculationsFilterInterface;
 use App\Repository\AuthKeyRepository;
-use App\Repository\ChfCalculationResultsRepository;
-use App\Repository\ClientsRepository;
 use App\Repository\CreditDataRepository;
-use App\Repository\PlnCalculationResultsRepository;
 use App\Service\Authorization\AuthorizationValidation;
 use App\Service\Serializer\DTOSerializer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,21 +20,19 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiController extends AbstractController
 {
     public function __construct(
-        private readonly CreditDataRepository      $creditDataRepository,
-        private readonly ClientsRepository $clientsRepository,
-        private readonly PlnCalculationResultsRepository $plnCalculationResultsRepository,
-        private readonly ChfCalculationResultsRepository $chfCalculationResultsRepository,
-        private readonly AuthKeyRepository $authKeyRepository,
+        private  AuthKeyRepository $authKeyRepository,
+        private  DTOSerializer $serializer,
         private EntityManagerInterface $entityManager
     )
     {
     }
 
     #[Route('/api/calculate', name: 'api_calculate', methods: 'POST')]
-    public function calculate(Request $request, DTOSerializer $serializer, CalculationsFilterInterface $creditCalculation): JsonResponse
+    public function calculate(Request $request, CalculationsFilterInterface $creditCalculation): JsonResponse
     {
         $calculateRequest = new CalculateRequestDTO();
         $JsonArray = json_decode($request->getContent(), true);
+        $serializer = $this->serializer;
 
         $calculateRequest->setClient(
             $serializer->deserialize($serializer->serialize($JsonArray['clients'], 'json'), Clients::class, 'json')
@@ -48,7 +43,7 @@ class ApiController extends AbstractController
 
         $calculation = $creditCalculation->apply($calculateRequest);
 
-        //TODO post to database (refactor this)
+        //TODO post to database (refactor this) / add unit test?
         $entityManager = $this->entityManager;
 
         $client = $calculation->getClient();
@@ -66,7 +61,7 @@ class ApiController extends AbstractController
         //TODO send emails
 
         $responseContent = $serializer->serialize($creditData, 'json');
-        return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
+        return new JsonResponse(data: $responseContent, status: Response::HTTP_CREATED, json: true);
     }
 
     #[Route('/api/find/all', name: 'api_find_all', methods: 'POST')]
@@ -75,18 +70,48 @@ class ApiController extends AbstractController
         $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
         $authorizationValidation->validate($request->headers->get('Authorization'));
 
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ApiController.php',
-        ]);
+        $serializer = $this->serializer;
+        $entityManager = $this->entityManager;
+
+        $creditDataRepository = $entityManager->getRepository(CreditData::class);
+        $calculations = [];
+        $calculations = $creditDataRepository->findAll();
+
+        $responseContent =  $serializer->serialize($calculations, 'json');
+        return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 
     #[Route('/api/find/single/{id}', name: 'api_find_single', methods: 'POST')]
-    public function findSingle(Request $request, int $id): JsonResponse
+    public function findSingle(int $id, CreditDataRepository $creditDataRepository): JsonResponse
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ApiController.php',
-        ]);
+        $calculation = $creditDataRepository->findOrFail($id);
+        $calculateRequest = new CalculateRequestDTO();
+        $serializer = $this->serializer;
+
+        $responseContent =  $serializer->serialize($calculation, 'json',['groups' => ['client','calculation_results', 'credit_data']]);
+        return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
+    }
+
+    #[Route('/api/find/by-currency/{currency}', name: 'api_find_by_currency', methods: 'POST')]
+    public function findByCurrency(Request $request, string $currency): JsonResponse
+    {
+        $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
+        $authorizationValidation->validate($request->headers->get('Authorization'));
+
+        $currency = strtoupper($currency);
+
+        $serializer = $this->serializer;
+        $entityManager = $this->entityManager;
+
+        $creditDataRepository = $entityManager->getRepository(CreditData::class);
+
+        $calculations = $creditDataRepository->findBy(
+            ['currency' => $currency],
+            ['id' => 'ASC']
+        );
+
+        $responseContent =  $serializer->serialize($calculations, 'json');
+        return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
+
     }
 }

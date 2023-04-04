@@ -4,26 +4,31 @@ namespace App\Entity;
 
 use App\Repository\CreditDataRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CreditDataRepository::class)]
 class CreditData implements EnquiryInterface
 {
+    #[Groups("credit_data")]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups("credit_data")]
     #[Assert\NotBlank]
     #[Assert\Currency]
     #[ORM\Column(length: 255)]
     private ?string $currency = null;
 
+    #[Groups("credit_data")]
     #[Assert\NotBlank]
     #[Assert\Positive]
     #[ORM\Column]
     private ?float $value = null;
 
+    #[Groups("credit_data")]
     #[Assert\NotBlank]
     #[Assert\GreaterThan(value: 1995)]
     #[Assert\LessThan(value: 2023)]
@@ -31,6 +36,7 @@ class CreditData implements EnquiryInterface
     #[ORM\Column(length: 4)]
     private ?string $startYear = null;
 
+    #[Groups("credit_data")]
     #[Assert\NotBlank]
     #[Assert\GreaterThan(value: 0)]
     #[Assert\LessThan(value: 13)]
@@ -39,18 +45,22 @@ class CreditData implements EnquiryInterface
     #[ORM\Column(length: 2)]
     private ?string $startMonth = null;
 
+    #[Groups("credit_data")]
     #[Assert\NotBlank]
     #[Assert\Positive]
     #[ORM\Column]
     private ?int $period = null;
 
+    #[Groups("credit_data")]
     #[ORM\Column(nullable: true)]
     private ?float $margin = null;
 
+    #[Groups("credit_data")]
     #[ORM\OneToOne(inversedBy: 'creditData', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?CalculationResults $CalculationResults = null;
 
+    #[Groups("credit_data")]
     #[ORM\ManyToOne(inversedBy: 'creditData')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Clients $clients = null;

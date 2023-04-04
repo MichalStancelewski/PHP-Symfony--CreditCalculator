@@ -25,14 +25,13 @@ class CreditDataRepository extends ServiceEntityRepository
 
     public function findOrFail(int $id): CreditData
     {
-        $creditData = $this->find($id);
-
-        if(!$creditData) {
+        $result = $this->find($id);
+        if(!$result) {
             $exceptionData = new ServiceExceptionData(404, 'Calculation Not Found');
             throw new ServiceException($exceptionData);
         }
 
-        return $creditData;
+        return $result;
     }
 
     public function save(CreditData $entity, bool $flush = false): void
@@ -53,28 +52,4 @@ class CreditDataRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return CreditData[] Returns an array of CreditData objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?CreditData
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
