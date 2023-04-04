@@ -96,7 +96,7 @@ class ApiController extends AbstractController
         $this->validateRequest($request, "restricted");
         $currency = strtoupper($currency);
 
-        //$calculations = $creditDataRepository->findAll();
+        $calculations = $creditDataRepository->findByCurrency($currency);
         $serializer = $this->serializer;
 
         $responseContent = $serializer->serialize($calculations, 'json', ['groups' => ['client', 'calculation_results', 'credit_data']]);

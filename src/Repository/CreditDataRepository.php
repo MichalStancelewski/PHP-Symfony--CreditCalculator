@@ -26,7 +26,7 @@ class CreditDataRepository extends ServiceEntityRepository
     public function findOrFail(int $id): CreditData
     {
         $result = $this->find($id);
-        if(!$result) {
+        if (!$result) {
             $exceptionData = new ServiceExceptionData(404, 'Calculation Not Found');
             throw new ServiceException($exceptionData);
         }
@@ -50,6 +50,26 @@ class CreditDataRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return CreditData[]
+     */
+    public function findByCurrency($value): array
+    {
+        $result = $this->createQueryBuilder('p')
+            ->andWhere('p.currency = :val')
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        if (!$result) {
+            $exceptionData = new ServiceExceptionData(404, 'No Calculation Found');
+            throw new ServiceException($exceptionData);
+        }
+
+        return $result;
     }
 
 }
