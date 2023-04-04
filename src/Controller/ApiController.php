@@ -20,8 +20,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiController extends AbstractController
 {
     public function __construct(
-        private  AuthKeyRepository $authKeyRepository,
-        private  DTOSerializer $serializer,
+        private AuthKeyRepository      $authKeyRepository,
+        private DTOSerializer          $serializer,
         private EntityManagerInterface $entityManager
     )
     {
@@ -30,6 +30,8 @@ class ApiController extends AbstractController
     #[Route('/api/calculate', name: 'api_calculate', methods: 'POST')]
     public function calculate(Request $request, CalculationsFilterInterface $creditCalculation): JsonResponse
     {
+        $this->validateRequest($request, "public");
+
         $calculateRequest = new CalculateRequestDTO();
         $JsonArray = json_decode($request->getContent(), true);
         $serializer = $this->serializer;
@@ -67,49 +69,43 @@ class ApiController extends AbstractController
     #[Route('/api/find/all', name: 'api_find_all', methods: 'POST')]
     public function findAll(Request $request, CreditDataRepository $creditDataRepository): JsonResponse
     {
-        $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
-        $authorizationValidation->validate($request->headers->get('Authorization'));
+        $this->validateRequest($request, "restricted");
 
         $calculations = $creditDataRepository->findAll();
         $serializer = $this->serializer;
 
-        $responseContent =  $serializer->serialize($calculations, 'json', ['groups' => ['client','calculation_results', 'credit_data']]);
+        $responseContent = $serializer->serialize($calculations, 'json', ['groups' => ['client', 'calculation_results', 'credit_data']]);
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 
     #[Route('/api/find/single/{id}', name: 'api_find_single', methods: 'POST')]
     public function findSingle(Request $request, int $id, CreditDataRepository $creditDataRepository): JsonResponse
     {
-        $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
-        $authorizationValidation->validate($request->headers->get('Authorization'));
+        $this->validateRequest($request, "restricted");
 
         $calculation = $creditDataRepository->findOrFail($id);
         $serializer = $this->serializer;
 
-        $responseContent =  $serializer->serialize($calculation, 'json',['groups' => ['client','calculation_results', 'credit_data']]);
+        $responseContent = $serializer->serialize($calculation, 'json', ['groups' => ['client', 'calculation_results', 'credit_data']]);
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 
     #[Route('/api/find/by-currency/{currency}', name: 'api_find_by_currency', methods: 'POST')]
-    public function findByCurrency(Request $request, string $currency): JsonResponse
+    public function findByCurrency(Request $request, string $currency, CreditDataRepository $creditDataRepository): JsonResponse
     {
-        $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
-        $authorizationValidation->validate($request->headers->get('Authorization'));
-
+        $this->validateRequest($request, "restricted");
         $currency = strtoupper($currency);
 
+        //$calculations = $creditDataRepository->findAll();
         $serializer = $this->serializer;
-        $entityManager = $this->entityManager;
 
-        $creditDataRepository = $entityManager->getRepository(CreditData::class);
-
-        $calculations = $creditDataRepository->findBy(
-            ['currency' => $currency],
-            ['id' => 'ASC']
-        );
-
-        $responseContent =  $serializer->serialize($calculations, 'json');
+        $responseContent = $serializer->serialize($calculations, 'json', ['groups' => ['client', 'calculation_results', 'credit_data']]);
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
+    }
 
+    private function validateRequest(Request $request, string $type)
+    {
+        $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
+        $authorizationValidation->validate($request->headers->get('Authorization'), $type);
     }
 }
