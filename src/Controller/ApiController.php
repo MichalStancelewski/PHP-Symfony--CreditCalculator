@@ -105,7 +105,8 @@ class ApiController extends AbstractController
 
     private function validateRequest(Request $request, string $type)
     {
+        $key = $request->headers->get('Authorization');
         $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
-        $authorizationValidation->validate($request->headers->get('Authorization'), $type);
+        $authorizationValidation->validate($key, $type);
     }
 }
