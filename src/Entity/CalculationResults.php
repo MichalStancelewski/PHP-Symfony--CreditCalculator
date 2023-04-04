@@ -12,7 +12,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 abstract class CalculationResults implements EnquiryInterface
 {
-    #[Groups("calculation_results")]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

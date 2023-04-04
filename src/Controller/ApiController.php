@@ -65,27 +65,25 @@ class ApiController extends AbstractController
     }
 
     #[Route('/api/find/all', name: 'api_find_all', methods: 'POST')]
-    public function findAll(Request $request): JsonResponse
+    public function findAll(Request $request, CreditDataRepository $creditDataRepository): JsonResponse
     {
         $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
         $authorizationValidation->validate($request->headers->get('Authorization'));
 
-        $serializer = $this->serializer;
-        $entityManager = $this->entityManager;
-
-        $creditDataRepository = $entityManager->getRepository(CreditData::class);
-        $calculations = [];
         $calculations = $creditDataRepository->findAll();
+        $serializer = $this->serializer;
 
-        $responseContent =  $serializer->serialize($calculations, 'json');
+        $responseContent =  $serializer->serialize($calculations, 'json', ['groups' => ['client','calculation_results', 'credit_data']]);
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 
     #[Route('/api/find/single/{id}', name: 'api_find_single', methods: 'POST')]
-    public function findSingle(int $id, CreditDataRepository $creditDataRepository): JsonResponse
+    public function findSingle(Request $request, int $id, CreditDataRepository $creditDataRepository): JsonResponse
     {
+        $authorizationValidation = new AuthorizationValidation($this->authKeyRepository);
+        $authorizationValidation->validate($request->headers->get('Authorization'));
+
         $calculation = $creditDataRepository->findOrFail($id);
-        $calculateRequest = new CalculateRequestDTO();
         $serializer = $this->serializer;
 
         $responseContent =  $serializer->serialize($calculation, 'json',['groups' => ['client','calculation_results', 'credit_data']]);

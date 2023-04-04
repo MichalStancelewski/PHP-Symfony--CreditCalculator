@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ClientsRepository::class)]
 class Clients implements EnquiryInterface
 {
-    #[Groups("client")]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
