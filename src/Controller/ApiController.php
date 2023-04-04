@@ -62,7 +62,7 @@ class ApiController extends AbstractController
 
         //TODO send emails
 
-        $responseContent = $serializer->serialize($creditData, 'json');
+        $responseContent = $serializer->serialize($creditData, 'json', ['groups' => ['client', 'calculation_results', 'credit_data']]);
         return new JsonResponse(data: $responseContent, status: Response::HTTP_CREATED, json: true);
     }
 

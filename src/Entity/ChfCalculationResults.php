@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ChfCalculationResultsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ChfCalculationResultsRepository::class)]
 class ChfCalculationResults extends CalculationResults
@@ -13,6 +14,7 @@ class ChfCalculationResults extends CalculationResults
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups("calculation_results")]
     #[ORM\Column]
     private ?float $overpaidInstallments = null;
 

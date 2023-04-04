@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PlnCalculationResultsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PlnCalculationResultsRepository::class)]
 class PlnCalculationResults extends CalculationResults
@@ -13,9 +14,11 @@ class PlnCalculationResults extends CalculationResults
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups("calculation_results")]
     #[ORM\Column]
     private ?float $fullCostIfNotChanged = null;
 
+    #[Groups("calculation_results")]
     #[ORM\Column]
     private ?float $profitAfterWiborAnnulment = null;
 
