@@ -3,7 +3,8 @@ namespace App\Service\Mailer;
 
 use App\DTO\CalculationEnquiryInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class EmailSender
 {
@@ -21,16 +22,29 @@ class EmailSender
     {
         $mailer =  $this->mailer;
 
-        $email = (new Email())
+        $email = (new TemplatedEmail())
             ->from(EmailSender::EMAIL_FROM)
             ->to($calculation->getClient()->getEmail())
             ->addBcc(EmailSender::EMAIL_ADMIN)
-            ->subject('Time for Symfony Mailer!')
-            ->text('Sending emails is fun again!')
+            ->subject('New Credit Calculation for ' .
+                $calculation->getClient()->getNameFirst() .
+                ' ' .
+                $calculation->getClient()->getNameLast() .
+                ' - Credit Calculator By stancelewski.pl '
+            )
+            ->htmlTemplate('emails/calculation.html.twig')
+            ->context([
+                'calculation' => $calculation
+            ])
         ;
 
-        $mailer->send($email);
-
+        try {
+            $mailer->send($email);
+        }
+        catch (TransportExceptionInterface $error) {
+                // some error prevented the email sending; display an error message or try to resend the message
+                return false;
+        }
         return true;
     }
 
