@@ -9,20 +9,25 @@ use App\Filter\CalculationsFilterInterface;
 use App\Repository\AuthKeyRepository;
 use App\Repository\CreditDataRepository;
 use App\Service\Authorization\AuthorizationValidation;
+use App\Service\Mailer\EmailSender;
 use App\Service\Serializer\DTOSerializer;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\PersisterException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use function PHPUnit\Framework\throwException;
 
 class ApiController extends AbstractController
 {
     public function __construct(
         private AuthKeyRepository      $authKeyRepository,
         private DTOSerializer          $serializer,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private MailerInterface        $mailer
     )
     {
     }
@@ -61,6 +66,8 @@ class ApiController extends AbstractController
         $entityManager->flush();
 
         //TODO send emails
+        $emailSender = new EmailSender($this->mailer);
+        $emailSender->sendEmails($calculation);
 
         $responseContent = $serializer->serialize($creditData, 'json', ['groups' => ['client', 'calculation_results', 'credit_data']]);
         return new JsonResponse(data: $responseContent, status: Response::HTTP_CREATED, json: true);
