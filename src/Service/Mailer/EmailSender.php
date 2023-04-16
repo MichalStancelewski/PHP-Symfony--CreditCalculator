@@ -26,7 +26,9 @@ class EmailSender
             ->from(EmailSender::EMAIL_FROM)
             ->to($calculation->getClient()->getEmail())
             ->addBcc(EmailSender::EMAIL_ADMIN)
-            ->subject('New Credit Calculation for ' .
+            ->subject('New ' .
+                $calculation->getCreditData()->getCurrency() .
+                ' Credit Calculation for ' .
                 $calculation->getClient()->getNameFirst() .
                 ' ' .
                 $calculation->getClient()->getNameLast() .

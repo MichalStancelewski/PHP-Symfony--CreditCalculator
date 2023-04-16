@@ -12,14 +12,12 @@ use App\Service\Authorization\AuthorizationValidation;
 use App\Service\Mailer\EmailSender;
 use App\Service\Serializer\DTOSerializer;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\PersisterException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use function PHPUnit\Framework\throwException;
 
 class ApiController extends AbstractController
 {
@@ -32,7 +30,7 @@ class ApiController extends AbstractController
     {
     }
 
-    #[Route('/api/calculate', name: 'api_calculate', methods: 'POST')]
+    #[Route('/calculate', name: 'api_calculate', methods: 'POST')]
     public function calculate(Request $request, CalculationsFilterInterface $creditCalculation): JsonResponse
     {
         $this->validateRequest($request, "public");
@@ -50,7 +48,6 @@ class ApiController extends AbstractController
 
         $calculation = $creditCalculation->apply($calculateRequest);
 
-        //TODO post to database (refactor this) / add unit test?
         $entityManager = $this->entityManager;
 
         $client = $calculation->getClient();
@@ -65,15 +62,18 @@ class ApiController extends AbstractController
 
         $entityManager->flush();
 
-        //TODO send emails
         $emailSender = new EmailSender($this->mailer);
-        $emailSender->sendEmails($calculation);
+        $emailSendStatus = $emailSender->sendEmails($calculation);
+
+        if (!$emailSendStatus) {
+            return new JsonResponse(data: "An error occurred while sending the email.", status: Response::HTTP_INTERNAL_SERVER_ERROR, json: true);
+        }
 
         $responseContent = $serializer->serialize($creditData, 'json', ['groups' => ['client', 'calculation_results', 'credit_data']]);
         return new JsonResponse(data: $responseContent, status: Response::HTTP_CREATED, json: true);
     }
 
-    #[Route('/api/find/all', name: 'api_find_all', methods: 'POST')]
+    #[Route('/find/all', name: 'api_find_all', methods: 'POST')]
     public function findAll(Request $request, CreditDataRepository $creditDataRepository): JsonResponse
     {
         $this->validateRequest($request, "restricted");
@@ -85,7 +85,7 @@ class ApiController extends AbstractController
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 
-    #[Route('/api/find/single/{id}', name: 'api_find_single', methods: 'POST')]
+    #[Route('/find/single/{id}', name: 'api_find_single', methods: 'POST')]
     public function findSingle(Request $request, int $id, CreditDataRepository $creditDataRepository): JsonResponse
     {
         $this->validateRequest($request, "restricted");
@@ -97,7 +97,7 @@ class ApiController extends AbstractController
         return new JsonResponse(data: $responseContent, status: Response::HTTP_OK, json: true);
     }
 
-    #[Route('/api/find/by-currency/{currency}', name: 'api_find_by_currency', methods: 'POST')]
+    #[Route('/find/by-currency/{currency}', name: 'api_find_by_currency', methods: 'POST')]
     public function findByCurrency(Request $request, string $currency, CreditDataRepository $creditDataRepository): JsonResponse
     {
         $this->validateRequest($request, "restricted");
