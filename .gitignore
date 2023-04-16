@@ -192,3 +192,4 @@ fabric.properties
 .idea
 mysql
 auth-key.txt
+api-info.txt
