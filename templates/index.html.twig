@@ -1,0 +1,299 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Credit Calculator - API Informations{% endblock %}
+
+{% block body %}
+
+
+    <div id="main-container">
+        <div id="content-wrap">
+            <div id="info" class="box">
+                <h1 id="page-title" class="header">Credit Calculator - API Informations</h1>
+                <p>Backend of the application with an API that calculates mortgage inquiries.
+                    The calculation module accepts data on the mortgage loan and returns information on possible
+                    receivables
+                    due to cancellation of the loan
+                    (due to, for example, abusive clauses).
+                    Demo version for some types of loans in PLN and CHF.</p>
+            </div>
+
+            <div id="api-example-1" class="box api-instruction">
+                <div class="api-method">
+                    <p>POST</p>
+                </div>
+                <div class="api-title">
+                    <h2 class="header">Calculate new request</h2>
+                </div>
+                <div class="api-description">
+                    <p>This method accepts a JSON object with customer and credit data and receives an object with
+                        finished calculations as a response.
+                        The system also sends e-mails with calculation results.</p>
+                </div>
+                <button onclick="toggle('api-details-1', this)" class="btn-toggle">More details &#43;</button>
+                <div id="api-details-1" class="toggle-box" style="display: none;">
+                    <h3 class="section-title header">URL</h3>
+                    <div class="api-url dark-background">
+                        <p>https://credit-calculator.stancelewski.pl/api/calculate</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST HEADER</h3>
+                    <div class="api-request-header dark-background">
+                        <p>Accept: application/json</p>
+                        <p>Content-Type: application/json</p>
+                        <p>Authorization: 5aRbZ4-nkN-txmLiUk8-a6g-tIA3Kf</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            {<br/>
+                            &emsp;"clients": {<br/>
+                            &emsp;&emsp;"name_first": "John",<br/>
+                            &emsp;&emsp;"name_last": "Doe",<br/>
+                            &emsp;&emsp;"email": "john.doe@mail.com",<br/>
+                            &emsp;&emsp;"phone": "321 321 321",<br/>
+                            &emsp;&emsp;"agreement_gdpr": true,<br/>
+                            &emsp;&emsp;"agreement_marketing": false<br/>
+                            &emsp;},<br/>
+                            &emsp;"credit_data": {<br/>
+                            &emsp;&emsp;"currency": "PLN",<br/>
+                            &emsp;&emsp;"value": 300000.00,<br/>
+                            &emsp;&emsp;"start_year": "2005",<br/>
+                            &emsp;&emsp;"start_month": "01",<br/>
+                            &emsp;&emsp;"period": 30,<br/>
+                            &emsp;&emsp;"margin": null<br/>
+                            &emsp;}<br/>
+                            }<br/>
+                        </p>
+                    </div>
+                    <h3 class="section-title header">RESPONSE BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            {<br/>
+                            &emsp;"id": 1,<br/>
+                            &emsp;"currency": "PLN",<br/>
+                            &emsp;"value": 300000.0,<br/>
+                            &emsp;"start_year": "2005",<br/>
+                            &emsp;"start_month": "01",<br/>
+                            &emsp;"period": 30,<br/>
+                            &emsp;"margin": 2.2,<br/>
+                            &emsp;"calculation_results": {<br/>
+                            &emsp;&emsp;"full_cost_if_not_changed": 679864.66,<br/>
+                            &emsp;&emsp;"profit_after_wibor_annulment": 269787.75,<br/>
+                            &emsp;&emsp;"calculation_date": "2023-05-28 14:27:50",<br/>
+                            &emsp;&emsp;"repayed_so_far": 383298.45,<br/>
+                            &emsp;&emsp;"profit_after_credit_annulment": 379864.66<br/>
+                            &emsp;},<br/>
+                            &emsp;"clients": {<br/>
+                            &emsp;&emsp;"name_first": "John",<br/>
+                            &emsp;&emsp;"name_last": "Doe",<br/>
+                            &emsp;&emsp;"email": "john.doe@mail.com",<br/>
+                            &emsp;&emsp;"phone": "321 321 321",<br/>
+                            &emsp;&emsp;"agreement_gdpr": true,<br/>
+                            &emsp;&emsp;"agreement_marketing": false<br/>
+                            &emsp;}<br/>
+                            }<br/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="api-example-2" class="box api-instruction">
+                <div class="api-method">
+                    <p>POST</p>
+                </div>
+                <div class="api-title">
+                    <h2 class="header">Find all calculations in database</h2>
+                </div>
+                <div class="api-description">
+                    <p>This method searches for and returns an array of JSON objects
+                        from all calculations available in the database along with assigned customer details and credit information.</p>
+                </div>
+                <button onclick="toggle('api-details-2', this)" class="btn-toggle">More details &#43;</button>
+                <div id="api-details-2" class="toggle-box" style="display: none;">
+                    <h3 class="section-title header">URL</h3>
+                    <div class="api-url dark-background">
+                        <p>https://credit-calculator.stancelewski.pl/api/find/all</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST HEADER</h3>
+                    <div class="api-request-header dark-background">
+                        <p>Accept: application/json</p>
+                        <p>Content-Type: application/json</p>
+                        <p>Authorization: a1q181cluKSZ-k5TBdI-KOyUQRxw0Dvm-DlYL6s-g4luICY0WQE6</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            {<br/>
+                            }<br/>
+                        </p>
+                    </div>
+                    <h3 class="section-title header">RESPONSE BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            [<br/>
+                            &emsp;{<br/>
+                            &emsp;&emsp;"id": 1,<br/>
+                            &emsp;&emsp;"currency": "PLN",<br/>
+                            &emsp;&emsp;"value": 300000.0,<br/>
+                            &emsp;&emsp;"start_year": "2005",<br/>
+                            &emsp;&emsp;"start_month": "01",<br/>
+                            &emsp;&emsp;"period": 30,<br/>
+                            &emsp;&emsp;"margin": 2.2,<br/>
+                            &emsp;&emsp;"calculation_results": {<br/>
+                            &emsp;&emsp;&emsp;"full_cost_if_not_changed": 679864.66,<br/>
+                            &emsp;&emsp;&emsp;"profit_after_wibor_annulment": 269787.75,<br/>
+                            &emsp;&emsp;&emsp;"calculation_date": "2023-04-16 23:30:07",<br/>
+                            &emsp;&emsp;&emsp;"repayed_so_far": 383298.45,<br/>
+                            &emsp;&emsp;&emsp;"profit_after_credit_annulment": 379864.66<br/>
+                            &emsp;&emsp;},<br/>
+                            &emsp;&emsp;"clients": {<br/>
+                            &emsp;&emsp;&emsp;"name_first": "John",<br/>
+                            &emsp;&emsp;&emsp;"name_last": "Doe",<br/>
+                            &emsp;&emsp;&emsp;"email": "john.doe@mail.com",<br/>
+                            &emsp;&emsp;&emsp;"phone": "321 321 321",<br/>
+                            &emsp;&emsp;&emsp;"agreement_gdpr": true,<br/>
+                            &emsp;&emsp;&emsp;"agreement_marketing": false<br/>
+                            &emsp;&emsp;}<br/>
+                            &emsp;},<br/>
+                            (...)<br/>
+                            ]<br/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="api-example-3" class="box api-instruction">
+                <div class="api-method">
+                    <p>POST</p>
+                </div>
+                <div class="api-title">
+                    <h2 class="header">Find all calculations in database by currency</h2>
+                </div>
+                <div class="api-description">
+                    <p>This method searches for the currency code (ISO 4217) and returns an array of JSON objects
+                        from all matching calculations along with the assigned customer and credit information.
+                        In the example, the PLN currency is available.</p>
+                </div>
+                <button onclick="toggle('api-details-3', this)" class="btn-toggle">More details &#43;</button>
+                <div id="api-details-3" class="toggle-box" style="display: none;">
+                    <h3 class="section-title header">URL</h3>
+                    <div class="api-url dark-background">
+                        <p>https://credit-calculator.stancelewski.pl/api/find/by-currency/{xyz}</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST HEADER</h3>
+                    <div class="api-request-header dark-background">
+                        <p>Accept: application/json</p>
+                        <p>Content-Type: application/json</p>
+                        <p>Authorization: a1q181cluKSZ-k5TBdI-KOyUQRxw0Dvm-DlYL6s-g4luICY0WQE6</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            {<br/>
+                            }<br/>
+                        </p>
+                    </div>
+                    <h3 class="section-title header">RESPONSE BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            [<br/>
+                            &emsp;{<br/>
+                            &emsp;&emsp;"id": 1,<br/>
+                            &emsp;&emsp;"currency": "PLN",<br/>
+                            &emsp;&emsp;"value": 300000.0,<br/>
+                            &emsp;&emsp;"start_year": "2005",<br/>
+                            &emsp;&emsp;"start_month": "01",<br/>
+                            &emsp;&emsp;"period": 30,<br/>
+                            &emsp;&emsp;"margin": 2.2,<br/>
+                            &emsp;&emsp;"calculation_results": {<br/>
+                            &emsp;&emsp;&emsp;"full_cost_if_not_changed": 679864.66,<br/>
+                            &emsp;&emsp;&emsp;"profit_after_wibor_annulment": 269787.75,<br/>
+                            &emsp;&emsp;&emsp;"calculation_date": "2023-04-16 23:30:07",<br/>
+                            &emsp;&emsp;&emsp;"repayed_so_far": 383298.45,<br/>
+                            &emsp;&emsp;&emsp;"profit_after_credit_annulment": 379864.66<br/>
+                            &emsp;&emsp;},<br/>
+                            &emsp;&emsp;"clients": {<br/>
+                            &emsp;&emsp;&emsp;"name_first": "John",<br/>
+                            &emsp;&emsp;&emsp;"name_last": "Doe",<br/>
+                            &emsp;&emsp;&emsp;"email": "john.doe@mail.com",<br/>
+                            &emsp;&emsp;&emsp;"phone": "321 321 321",<br/>
+                            &emsp;&emsp;&emsp;"agreement_gdpr": true,<br/>
+                            &emsp;&emsp;&emsp;"agreement_marketing": false<br/>
+                            &emsp;&emsp;}<br/>
+                            &emsp;},<br/>
+                            (...)<br/>
+                            ]<br/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="api-example-4" class="box api-instruction">
+                <div class="api-method">
+                    <p>POST</p>
+                </div>
+                <div class="api-title">
+                    <h2 class="header">Find single calculation in database by ID</h2>
+                </div>
+                <div class="api-description">
+                    <p>This method searches by ID and returns a JSON object with single calculation data and assigned customer data and credit information.</p>
+                </div>
+                <button onclick="toggle('api-details-4', this)" class="btn-toggle">More details &#43;</button>
+                <div id="api-details-4" class="toggle-box" style="display: none;">
+                    <h3 class="section-title header">URL</h3>
+                    <div class="api-url dark-background">
+                        <p>https://credit-calculator.stancelewski.pl/api/find/single/{id}</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST HEADER</h3>
+                    <div class="api-request-header dark-background">
+                        <p>Accept: application/json</p>
+                        <p>Content-Type: application/json</p>
+                        <p>Authorization: a1q181cluKSZ-k5TBdI-KOyUQRxw0Dvm-DlYL6s-g4luICY0WQE6</p>
+                    </div>
+                    <h3 class="section-title header">REQUEST BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            {<br/>
+                            }<br/>
+                        </p>
+                    </div>
+                    <h3 class="section-title header">RESPONSE BODY</h3>
+                    <div class="api-request-header dark-background">
+                        <p>
+                            {<br/>
+                            &emsp;"id": 1,<br/>
+                            &emsp;"currency": "PLN",<br/>
+                            &emsp;"value": 300000.0,<br/>
+                            &emsp;"start_year": "2005",<br/>
+                            &emsp;"start_month": "01",<br/>
+                            &emsp;"period": 30,<br/>
+                            &emsp;"margin": 2.2,<br/>
+                            &emsp;"calculation_results": {<br/>
+                            &emsp;&emsp;"full_cost_if_not_changed": 679864.66,<br/>
+                            &emsp;&emsp;"profit_after_wibor_annulment": 269787.75,<br/>
+                            &emsp;&emsp;"calculation_date": "2023-04-16 23:30:07",<br/>
+                            &emsp;&emsp;"repayed_so_far": 383298.45,<br/>
+                            &emsp;&emsp;"profit_after_credit_annulment": 379864.66<br/>
+                            &emsp;},<br/>
+                            &emsp;"clients": {<br/>
+                            &emsp;&emsp;"name_first": "John",<br/>
+                            &emsp;&emsp;"name_last": "Doe",<br/>
+                            &emsp;&emsp;"email": "john.doe@mail.com",<br/>
+                            &emsp;&emsp;"phone": "321 321 321",<br/>
+                            &emsp;&emsp;"agreement_gdpr": true,<br/>
+                            &emsp;&emsp;"agreement_marketing": false<br/>
+                            &emsp;}<br/>
+                            },<br/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            Copyrigth © 2023 by Michał Stancelewski
+        </div>
+
+    </div>
+
+
+
+{% endblock %}

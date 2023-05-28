@@ -30,6 +30,15 @@ class ApiController extends AbstractController
     {
     }
 
+    #[Route('/', name: 'api_index', methods: 'GET')]
+    public function index(): Response
+    {
+        return $this->render('index.html.twig', [
+            'authorizationRestricted' => $this->authKeyRepository->find(1)->getKeyName(),
+            'authorizationPublic' => $this->authKeyRepository->find(2)->getKeyName(),
+        ]);
+    }
+
     #[Route('/calculate', name: 'api_calculate', methods: 'POST')]
     public function calculate(Request $request, CalculationsFilterInterface $creditCalculation): JsonResponse
     {

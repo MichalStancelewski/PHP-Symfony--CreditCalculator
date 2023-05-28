@@ -1,0 +1,111 @@
+body {
+    background-color: #e3e6e9;
+    overflow-wrap: break-word;
+}
+
+#main-container {
+    max-width: 1080px;
+    margin: 20px auto;
+    position: relative;
+    min-height: calc(100vh - 3rem);
+}
+
+#content-wrap {
+    padding-bottom: 3rem;
+}
+
+#footer {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    height: 1rem;
+    background: rgba(0, 0, 0, 0);
+    text-align: center;
+    font-family: 'Cutive Mono', monospace;
+    color: #6a6a6a;
+}
+
+h1 {
+    font-size: 20px;
+    margin-bottom: 0.5em !important;
+}
+
+h2 {
+    font-size: 17px;
+    margin-bottom: 0.5em !important;
+}
+
+h3 {
+    font-size: 14px;
+    margin-bottom: 0.1em !important;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+}
+
+.header {
+    padding: 0;
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+}
+
+.box {
+    background-color: #f3f6f9;
+    padding: 25px;
+    margin: 10px;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: 0 0 5px #d2d2d2;
+}
+
+#info{
+    border: 1px solid #c2c2c2;
+}
+
+.section-title {
+    margin-top: 18px;
+}
+
+.api-method p {
+    color: #ffa213;
+    margin-bottom: 5px;
+}
+
+.dark-background {
+    background-color: #333333;
+    padding: 5px 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.dark-background p {
+    font-family: 'Cutive Mono', monospace;
+    color: #d4d4d4;
+    line-height: 1.33;
+}
+
+.btn-toggle{
+    margin-top: 15px;
+    padding: 0;
+    border: 0;
+    border-bottom: 2px solid #ec6d18;
+    background-color: transparent;
+    color: #ec6d18;
+    font-weight: 700;
+    transition: 0.12s;
+}
+.btn-toggle:hover{
+    cursor: pointer;
+    color: #fd7e29;
+    border-bottom: 2px solid #fd7e29;
+}
+
+@media only screen and (max-width: 768px) {
+    .dark-background p {
+        font-size: 10px;
+        line-height: 1.33;
+    }
+}
